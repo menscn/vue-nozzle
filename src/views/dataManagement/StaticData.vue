@@ -1,0 +1,1399 @@
+<template>
+    <div>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content bg-purple">
+                    <div id="graph-chart" style="height:850px;">
+                        <div id="main-chart" style="width: 100%; height: 100%;padding: 20px;"></div>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <el-row>
+                    <div class="grid-content bg-purple">
+                        <el-container style="height: 400px;padding-right: 10px;">
+                            <el-aside width="100px" style="border: 4px solid #909399;">
+                                <div style="writing-mode: vertical-lr;font-size: 30px;
+                                padding-left:21px;padding-top: 100px;">
+                                    点云数据</div>
+                            </el-aside>
+                            <el-container style="border: 2px solid #909399;">
+                                <el-header style="height:30px">
+                                    <el-form :inline="true" :model="formInline" class="user-search">
+                                        <el-form-item label="搜索：">
+                                            <el-input size="small" v-model="formInline.machineNo" placeholder="输入终端号">
+                                            </el-input>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button size="small" type="primary" icon="el-icon-search"
+                                                @click="search">搜索
+                                            </el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </el-header>
+                                <el-main>
+                                    <el-table :data="tableData" border style="width: 100%;max-height: 270px;">
+                                        <el-table-column fixed prop="id" label="编号-动态数据" width="100">
+                                        </el-table-column>
+                                        <el-table-column prop="xmlStr" label="装配批次" width="160">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint2" label="关节1" width="160">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint2" label="关节2" width="168">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint3" label="关节3" width="168">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint4" label="关节4" width="168">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint5" label="关节5" width="163">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint6" label="关节6" width="165">
+                                        </el-table-column>
+                                        <el-table-column prop="createTime" label="创建时间" width="170">
+                                        </el-table-column>
+                                        <el-table-column label="操作" width="200">
+                                            <template slot-scope="scope">
+                                                <el-button @click="del(scope.row)" type="danger" size="small">删除
+                                                </el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </el-main>
+                                <el-footer>
+                                    <el-pagination class="pagination" background layout="prev, pager, next,jumper,total"
+                                        @current-change="handlepagechange" :total="pagination.total"
+                                        :page-size="pagination.pageSize" :current-page="pagination.currentpage">
+                                        <!--分别是前一页，当前页面,下一个,跳转布局 总数 页面大小 当前也-->
+                                    </el-pagination>
+                                </el-footer>
+                            </el-container>
+                        </el-container>
+                    </div>
+                </el-row>
+                <el-row style="margin-top:20px">
+                    <div class="grid-content bg-purple">
+                        <el-container style="height: 400px;padding-right: 10px;">
+                            <el-aside width="100px" style="border: 4px solid #909399;">
+                                <div style="writing-mode: vertical-lr;font-size: 30px;
+                                padding-left: 21px;padding-top: 120px;">
+                                    装配工艺信息</div>
+                            </el-aside>
+                            <el-container style="border: 2px solid #909399;">
+                                <el-header>
+                                    <el-form :inline="true" :model="formInline" class="user-search">
+                                        <el-form-item label="搜索：">
+                                            <el-input size="small" v-model="formInline.machineNo" placeholder="输入终端号">
+                                            </el-input>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button size="small" type="primary" icon="el-icon-search"
+                                                @click="search">搜索
+                                            </el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </el-header>
+                                <el-main>
+                                    <el-table :data="tableData" border style="width: 100%;max-height: 270px;">
+                                        <el-table-column fixed prop="id" label="编号-动态数据" width="100">
+                                        </el-table-column>
+                                        <el-table-column prop="xmlStr" label="装配批次" width="160">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint2" label="关节1" width="160">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint2" label="关节2" width="168">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint3" label="关节3" width="168">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint4" label="关节4" width="168">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint5" label="关节5" width="163">
+                                        </el-table-column>
+                                        <el-table-column prop="sjoint6" label="关节6" width="165">
+                                        </el-table-column>
+                                        <el-table-column prop="createTime" label="创建时间" width="170">
+                                        </el-table-column>
+                                        <el-table-column label="操作" width="200">
+                                            <template slot-scope="scope">
+                                                <el-button @click="del(scope.row)" type="danger" size="small">删除
+                                                </el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </el-main>
+                                <el-footer>
+                                    <el-pagination class="pagination" background layout="prev, pager, next,jumper,total"
+                                        @current-change="handlepagechange" :total="pagination.total"
+                                        :page-size="pagination.pageSize" :current-page="pagination.currentpage">
+                                        <!--分别是前一页，当前页面,下一个,跳转布局 总数 页面大小 当前也-->
+                                    </el-pagination>
+                                </el-footer>
+                            </el-container>
+                        </el-container>
+                    </div>
+                </el-row>
+                <el-row style="margin-top:20px;padding-left: 50px;">
+                    <el-col :span="8"><el-button type="primary" round>零部件装配关系网络</el-button></el-col>
+                    <el-col :span="8"><el-button type="warning" round>下一张装配工艺卡</el-button></el-col>
+                    <el-col :span="8"><el-button type="warning" round>上一张装配工艺卡</el-button></el-col>
+                </el-row>
+            </el-col>
+        </el-row>
+    </div>
+</template>
+
+<script>
+import echarts from "echarts";
+export default {
+    name: "table",
+    data() {
+        return {
+            tableData: [],
+            total: 0, // 总记录数
+            current: 1, // 页码
+            limit: 10, // 每页记录数
+            pages: '0', //总页码数
+            formInline: {
+                page: 1,
+                limit: 10,
+                varLable: '',
+                varName: '',
+                token: localStorage.getItem('logintoken')
+            },
+            pagination: {
+                currentpage: 1,
+                pageSize: 10,
+                total: 0,
+            }
+        }
+    },
+    methods: {
+        initChart: function () {
+            let myChart = echarts.init(document.getElementById("main-chart"));
+            myChart.resize();
+            myChart.setOption(this.setOption());
+        },
+        setOption: function () {
+            let option = {
+                title: {
+                    text: "特征装配关系网络",
+                },
+                tooltip: {}, //提示框
+                animationDurationUpdate: 1500,
+                animationEasingUpdate: "quinticInOut",
+                series: [
+                    {
+                        type: "graph",
+                        layout: "force",
+                        // symbolSize: 50, //倘若该属性不在link里，则其表示节点的大小；否则即为线两端标记的大小
+                        symbolSize: (value, params) => {
+                            switch (params.data.category) {
+                                case 0:
+                                    return 100;
+                                    break;
+                                case 1:
+                                    return 50;
+                                    break;
+                            }
+                        },
+                        roam: true, //鼠标缩放功能
+                        label: {
+                            show: true, //是否显示标签
+                        },
+                        focusNodeAdjacency: true, //鼠标移到节点上时突出显示结点以及邻节点和边
+                        edgeSymbol: ["none", "arrow"], //关系两边的展现形式，也即图中线两端的展现形式。arrow为箭头
+                        edgeSymbolSize: [4, 10],
+                        draggable: true,
+                        edgeLabel: {
+                            fontSize: 20, //关系（也即线）上的标签字体大小
+                        },
+                        force: {
+                            repulsion: 200,
+                            edgeLength: 120,
+                        },
+                        data: [
+                            {
+                                "id": "RXJT_Dis_T_B",
+                                "name": "RXJT_Dis_T_B",
+                                "symbolSize": 19.12381,
+                                "x": -266.82776,
+                                "y": 299.6904,
+                                "value": 28.685715,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_S_T",
+                                "name": "RXJT_S_T",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -418.08344,
+                                "y": 446.8853,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_S_T_b",
+                                "name": "RXJT_S_T_b",
+                                "symbolSize": 6.323809333333333,
+                                "x": -212.76357,
+                                "y": 245.29176,
+                                "value": 9.485714,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_Dia_T",
+                                "name": "RXJT_Dia_T",
+                                "symbolSize": 6.323809333333333,
+                                "x": -242.82404,
+                                "y": 235.26283,
+                                "value": 9.485714,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_Dia_H",
+                                "name": "RXJT_Dia_H",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -379.30386,
+                                "y": 429.06424,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_S_H",
+                                "name": "RXJT_S_H",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -417.26337,
+                                "y": 406.03506,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_OutS_A",
+                                "name": "RXJT_OutS_A",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -332.6012,
+                                "y": 485.16974,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_OutS",
+                                "name": "RXJT_OutS",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -382.69568,
+                                "y": 475.09113,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_S_B",
+                                "name": "RXJT_S_B",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -320.384,
+                                "y": 387.17325,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_Dia_T_H",
+                                "name": "RXJT_Dia_T_H",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -344.39832,
+                                "y": 451.16772,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_Dia_B_Rh",
+                                "name": "RXJT_Dia_B_Rh",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -89.34107,
+                                "y": 234.56128,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_Dia_B_H",
+                                "name": "RXJT_Dia_B_H",
+                                "symbolSize": 66.66666666666667,
+                                "x": -87.93029,
+                                "y": -6.8120565,
+                                "value": 100,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_Dia_T_Rs",
+                                "name": "RXJT_Dia_T_Rs",
+                                "symbolSize": 4.495239333333333,
+                                "x": -339.77908,
+                                "y": -184.69139,
+                                "value": 6.742859,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_Dia_B_Rs",
+                                "name": "RXJT_Dia_B_Rs",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -194.31313,
+                                "y": 178.55301,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_ZX",
+                                "name": "RXJT_ZX",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -158.05168,
+                                "y": 201.99768,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_T_H",
+                                "name": "RXJT_T_H",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -127.701546,
+                                "y": 242.55057,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_Dis_T_B",
+                                "name": "GDT_Dis_T_B",
+                                "symbolSize": 17.295237333333333,
+                                "x": -385.2226,
+                                "y": -393.5572,
+                                "value": 25.942856,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_S_T",
+                                "name": "GDT_S_T",
+                                "symbolSize": 13.638097333333334,
+                                "x": -516.55884,
+                                "y": -393.98975,
+                                "value": 20.457146,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_Dia_T",
+                                "name": "GDT_Dia_T",
+                                "symbolSize": 13.638097333333334,
+                                "x": -464.79382,
+                                "y": -493.57944,
+                                "value": 20.457146,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_Dia_T_H",
+                                "name": "GDT_Dia_T_H",
+                                "symbolSize": 13.638097333333334,
+                                "x": -515.1624,
+                                "y": -456.9891,
+                                "value": 20.457146,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_S_B",
+                                "name": "GDT_S_B",
+                                "symbolSize": 13.638097333333334,
+                                "x": -408.12122,
+                                "y": -464.5048,
+                                "value": 20.457146,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_Dia_B_H",
+                                "name": "GDT_Dia_B_H",
+                                "symbolSize": 13.638097333333334,
+                                "x": -456.44113,
+                                "y": -425.13303,
+                                "value": 20.457146,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_Dia_B_Rh",
+                                "name": "GDT_Dia_B_Rh",
+                                "symbolSize": 13.638097333333334,
+                                "x": -459.1107,
+                                "y": -362.5133,
+                                "value": 20.457146,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_Dia_T_Rs",
+                                "name": "GDT_Dia_T_Rs",
+                                "symbolSize": 28.266666666666666,
+                                "x": -313.42786,
+                                "y": -289.44803,
+                                "value": 42.4,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_ZX",
+                                "name": "GDT_ZX",
+                                "symbolSize": 20.95238266666667,
+                                "x": 4.6313396,
+                                "y": -273.8517,
+                                "value": 31.428574,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_GDT_LS_01",
+                                "name": "RXJT_GDT_LS_01",
+                                "symbolSize": 30.095235333333335,
+                                "x": 82.80825,
+                                "y": -203.1144,
+                                "value": 45.142853,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_GDT_LS_02",
+                                "name": "RXJT_GDT_LS_02",
+                                "symbolSize": 20.95238266666667,
+                                "x": 78.64646,
+                                "y": -31.512747,
+                                "value": 31.428574,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_GDT_LS_03",
+                                "name": "RXJT_GDT_LS_03",
+                                "symbolSize": 31.923806666666668,
+                                "x": -81.46074,
+                                "y": -204.20204,
+                                "value": 47.88571,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_GDT_LS_04",
+                                "name": "RXJT_GDT_LS_04",
+                                "symbolSize": 8.152382000000001,
+                                "x": -225.73984,
+                                "y": 82.41631,
+                                "value": 12.228573,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_GDT_LS_05",
+                                "name": "RXJT_GDT_LS_05",
+                                "symbolSize": 15.466666666666667,
+                                "x": -385.6842,
+                                "y": -20.206686,
+                                "value": 23.2,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_JQL",
+                                "name": "RXJT_JQL",
+                                "symbolSize": 4.495239333333333,
+                                "x": -403.92447,
+                                "y": -197.69823,
+                                "value": 6.742859,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_JQL",
+                                "name": "GDT_JQL",
+                                "symbolSize": 8.152382000000001,
+                                "x": -281.4253,
+                                "y": -158.45137,
+                                "value": 12.228573,
+                                "category": 0
+                            },
+                            {
+                                "id": "RXJT_POS",
+                                "name": "RXJT_POS",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -122.41348,
+                                "y": 210.37503,
+                                "value": 4,
+                                "category": 0
+                            },
+                            {
+                                "id": "GDT_POS",
+                                "name": "GDT_POS",
+                                "symbolSize": 4.495239333333333,
+                                "x": -234.6001,
+                                "y": -113.15067,
+                                "value": 6.742859,
+                                "category": 0
+                            },
+                            {
+                                "id": "KZD_Dis_T_B",
+                                "name": "KZD_Dis_T_B",
+                                "symbolSize": 11.809524666666666,
+                                "x": -387.84915,
+                                "y": 58.7059,
+                                "value": 17.714287,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_S_T",
+                                "name": "KZD_S_T",
+                                "symbolSize": 11.809524666666666,
+                                "x": -338.2307,
+                                "y": 87.48405,
+                                "value": 17.714287,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_Dia_T_H",
+                                "name": "KZD_Dia_T_H",
+                                "symbolSize": 11.809524666666666,
+                                "x": -453.26874,
+                                "y": 58.94648,
+                                "value": 17.714287,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_Dia_T",
+                                "name": "KZD_Dia_T",
+                                "symbolSize": 11.809524666666666,
+                                "x": -386.44904,
+                                "y": 140.05937,
+                                "value": 17.714287,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_Dia_H",
+                                "name": "KZD_Dia_H",
+                                "symbolSize": 11.809524666666666,
+                                "x": -446.7876,
+                                "y": 123.38005,
+                                "value": 17.714287,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_S_H",
+                                "name": "KZD_S_H",
+                                "symbolSize": 6.323809333333333,
+                                "x": 336.49738,
+                                "y": -269.55914,
+                                "value": 9.485714,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_Dia_T_Rs",
+                                "name": "KZD_Dia_T_Rs",
+                                "symbolSize": 2.6666666666666665,
+                                "x": 29.187843,
+                                "y": -460.13132,
+                                "value": 4,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_ZX",
+                                "name": "KZD_ZX",
+                                "symbolSize": 20.95238266666667,
+                                "x": 238.36697,
+                                "y": -210.00926,
+                                "value": 31.428574,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_Dis_GDT_B",
+                                "name": "KZD_Dis_GDT_B",
+                                "symbolSize": 6.323809333333333,
+                                "x": 189.69513,
+                                "y": -346.50662,
+                                "value": 9.485714,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_Dis_RXJT_B",
+                                "name": "KZD_Dis_RXJT_B",
+                                "symbolSize": 6.323809333333333,
+                                "x": -187.00418,
+                                "y": -145.02663,
+                                "value": 9.485714,
+                                "category": 1
+                            },
+                            {
+                                "id": "RXJT_KZD_LS_01",
+                                "name": "RXJT_KZD_LS_01",
+                                "symbolSize": 4.495239333333333,
+                                "x": -252.99521,
+                                "y": 129.87549,
+                                "value": 6.742859,
+                                "category": 1
+                            },
+                            {
+                                "id": "RXJT_KZD_LS_02",
+                                "name": "RXJT_KZD_LS_02",
+                                "symbolSize": 2.6666666666666665,
+                                "x": -296.07935,
+                                "y": 163.11964,
+                                "value": 4,
+                                "category": 1
+                            },
+                            {
+                                "id": "RXJT_KZD_LS_03",
+                                "name": "RXJT_KZD_LS_03",
+                                "symbolSize": 2.6666666666666665,
+                                "x": 550.3201,
+                                "y": 522.4031,
+                                "value": 4,
+                                "category": 1
+                            },
+                            {
+                                "id": "RXJT_KZD_LS_04",
+                                "name": "RXJT_KZD_LS_04",
+                                "symbolSize": 4.495239333333333,
+                                "x": 488.13535,
+                                "y": 356.8573,
+                                "value": 6.742859,
+                                "category": 1
+                            },
+                            {
+                                "id": "RXJT_KZD_LS_05",
+                                "name": "RXJT_KZD_LS_05",
+                                "symbolSize": 41.06667066666667,
+                                "x": 387.89572,
+                                "y": 110.462326,
+                                "value": 61.600006,
+                                "category": 1
+                            },
+                            {
+                                "id": "RXJT_GDT_JQL",
+                                "name": "RXJT_GDT_JQL",
+                                "symbolSize": 13.638097333333334,
+                                "x": 126.4831,
+                                "y": 68.10622,
+                                "value": 20.457146,
+                                "category": 1
+                            },
+                            {
+                                "id": "RXJT_KZD_JQL",
+                                "name": "RXJT_KZD_JQL",
+                                "symbolSize": 4.495239333333333,
+                                "x": 127.07365,
+                                "y": -113.05923,
+                                "value": 6.742859,
+                                "category": 1
+                            },
+                            {
+                                "id": "RXJT_GDT_POS",
+                                "name": "RXJT_GDT_POS",
+                                "symbolSize": 13.638097333333334,
+                                "x": 162.63559,
+                                "y": 117.6565,
+                                "value": 20.457146,
+                                "category": 1
+                            },
+                            {
+                                "id": "KZD_POS",
+                                "name": "KZD_POS",
+                                "symbolSize": 4.495239333333333,
+                                "x": 353.66415,
+                                "y": -205.89165,
+                                "value": 6.742859,
+                                "category": 1
+                            },
+                            {
+                                "id": "BHGD_Dis_T_B",
+                                "name": "BHGD_Dis_T_B",
+                                "symbolSize": 2.6666666666666665,
+                                "x": 165.43939,
+                                "y": 339.7736,
+                                "value": 4,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_S_T",
+                                "name": "BHGD_S_T",
+                                "symbolSize": 8.152382000000001,
+                                "x": 137.69348,
+                                "y": 196.1069,
+                                "value": 12.228573,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_Dia_T_H",
+                                "name": "BHGD_Dia_T_H",
+                                "symbolSize": 35.58095333333333,
+                                "x": 206.44687,
+                                "y": -13.805411,
+                                "value": 53.37143,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_Dia_T",
+                                "name": "BHGD_Dia_T",
+                                "symbolSize": 4.495239333333333,
+                                "x": 194.82993,
+                                "y": 224.78036,
+                                "value": 6.742859,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_ZX",
+                                "name": "BHGD_ZX",
+                                "symbolSize": 20.95238266666667,
+                                "x": 597.6618,
+                                "y": 135.18481,
+                                "value": 31.428574,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_KZD_LS_01",
+                                "name": "BHGD_KZD_LS_01",
+                                "symbolSize": 28.266666666666666,
+                                "x": 355.78366,
+                                "y": -74.882454,
+                                "value": 42.4,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_KZD_LS_02",
+                                "name": "BHGD_KZD_LS_02",
+                                "symbolSize": 20.95238266666667,
+                                "x": 515.2961,
+                                "y": -46.167564,
+                                "value": 31.428574,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_KZD_LS_03",
+                                "name": "BHGD_KZD_LS_03",
+                                "symbolSize": 17.295237333333333,
+                                "x": 614.29285,
+                                "y": -69.3104,
+                                "value": 25.942856,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_KZD_LS_04",
+                                "name": "BHGD_KZD_LS_04",
+                                "symbolSize": 20.95238266666667,
+                                "x": 550.1917,
+                                "y": -128.17537,
+                                "value": 31.428574,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_KZD_LS_05",
+                                "name": "BHGD_KZD_LS_05",
+                                "symbolSize": 24.609526666666667,
+                                "x": 436.17184,
+                                "y": -12.7286825,
+                                "value": 36.91429,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_JQL",
+                                "name": "BHGD_JQL",
+                                "symbolSize": 22.780953333333333,
+                                "x": 602.55225,
+                                "y": 16.421427,
+                                "value": 34.17143,
+                                "category": 2
+                            },
+                            {
+                                "id": "BHGD_POS",
+                                "name": "BHGD_POS",
+                                "symbolSize": 24.609526666666667,
+                                "x": 455.81955,
+                                "y": -115.45826,
+                                "value": 36.91429,
+                                "category": 2
+                            },
+                            {
+                                "id": "JT_ZX",
+                                "name": "JT_ZX",
+                                "symbolSize": 22.780953333333333,
+                                "x": 516.40784,
+                                "y": 47.242233,
+                                "value": 34.17143,
+                                "category": 3
+                            },
+                            {
+                                "id": "JT_InS_A",
+                                "name": "JT_InS_A",
+                                "symbolSize": 19.12381,
+                                "x": 646.4313,
+                                "y": -151.06331,
+                                "value": 28.685715,
+                                "category": 3
+                            },
+                            {
+                                "id": "JT_InS",
+                                "name": "JT_InS",
+                                "symbolSize": 2.6666666666666665,
+                                "x": 668.9568,
+                                "y": 204.65488,
+                                "value": 4,
+                                "category": 3
+                            },
+                            {
+                                "id": "JTFRH_JQL",
+                                "name": "JTFRH_JQL",
+                                "symbolSize": 19.12381,
+                                "x": 78.4799,
+                                "y": -347.15146,
+                                "value": 28.685715,
+                                "category": 3
+                            },
+                            {
+                                "id": "JTFRH_POS",
+                                "name": "JTFRH_POS",
+                                "symbolSize": 19.12381,
+                                "x": 150.35959,
+                                "y": -298.50797,
+                                "value": 28.685715,
+                                "category": 3
+                            },
+                            {
+                                "id": "HC_OutS",
+                                "name": "HC_OutS",
+                                "symbolSize": 19.12381,
+                                "x": 137.3717,
+                                "y": -410.2809,
+                                "value": 28.685715,
+                                "category": 4
+                            },
+                            {
+                                "id": "HC_Dia_Out",
+                                "name": "HC_Dia_Out",
+                                "symbolSize": 17.295237333333333,
+                                "x": 234.87747,
+                                "y": -400.85983,
+                                "value": 25.942856,
+                                "category": 4
+                            },
+                            {
+                                "id": "HC_ZX",
+                                "name": "HC_ZX",
+                                "symbolSize": 6.323809333333333,
+                                "x": 40.942253,
+                                "y": 113.78272,
+                                "value": 9.485714,
+                                "category": 4
+                            },
+                            {
+                                "id": "HC_S_Tb",
+                                "name": "HC_S_Tb",
+                                "symbolSize": 4.495239333333333,
+                                "x": 437.939,
+                                "y": 291.58234,
+                                "value": 6.742859,
+                                "category": 4
+                            },
+                            {
+                                "id": "HC_JQL",
+                                "name": "HC_JQL",
+                                "symbolSize": 4.495239333333333,
+                                "x": 466.04922,
+                                "y": 283.3606,
+                                "value": 6.742859,
+                                "category": 4
+                            },
+                            {
+                                "id": "HC_POS",
+                                "name": "HC_POS",
+                                "symbolSize": 13.638097333333334,
+                                "x": 238.79364,
+                                "y": -314.06345,
+                                "value": 20.457146,
+                                "category": 4
+                            }
+                        ],
+                        links: [
+                            {
+                                "source": "RXJT_Dis_T_B",
+                                "target": "RXJT_S_T"
+                            },
+                            {
+                                "source": "RXJT_S_T",
+                                "target": "RXJT_S_T_b"
+                            },
+                            {
+                                "source": "RXJT_S_T_b",
+                                "target": "RXJT_Dia_T"
+                            },
+                            {
+                                "source": "RXJT_Dia_T",
+                                "target": "RXJT_Dia_H"
+                            },
+                            {
+                                "source": "RXJT_Dia_H",
+                                "target": "RXJT_S_H"
+                            },
+                            {
+                                "source": "RXJT_S_H",
+                                "target": "RXJT_OutS_A"
+                            },
+                            {
+                                "source": "RXJT_OutS_A",
+                                "target": "RXJT_OutS"
+                            },
+                            {
+                                "source": "RXJT_OutS",
+                                "target": "RXJT_S_B"
+                            },
+                            {
+                                "source": "RXJT_S_B",
+                                "target": "RXJT_Dia_T_H"
+                            },
+                            {
+                                "source": "RXJT_Dia_T_H",
+                                "target": "RXJT_Dia_B_Rh"
+                            },
+                            {
+                                "source": "RXJT_Dia_B_Rh",
+                                "target": "RXJT_Dia_B_H"
+                            },
+                            {
+                                "source": "RXJT_Dia_B_H",
+                                "target": "RXJT_Dia_T_Rs"
+                            },
+                            {
+                                "source": "RXJT_Dia_T_Rs",
+                                "target": "RXJT_Dia_B_Rs"
+                            },
+                            {
+                                "source": "RXJT_Dia_B_Rs",
+                                "target": "RXJT_ZX"
+                            },
+                            {
+                                "source": "RXJT_ZX",
+                                "target": "RXJT_T_H"
+                            },
+                            {
+                                "source": "RXJT_T_H",
+                                "target": "RXJT_Dis_T_B"
+                            },
+                            {
+                                "source": "GDT_Dis_T_B",
+                                "target": "GDT_S_T"
+                            },
+                            {
+                                "source": "GDT_S_T",
+                                "target": "GDT_Dia_T"
+                            },
+                            {
+                                "source": "GDT_Dia_T",
+                                "target": "GDT_Dia_T_H"
+                            },
+                            {
+                                "source": "GDT_Dia_T_H",
+                                "target": "GDT_S_B"
+                            },
+                            {
+                                "source": "GDT_S_B",
+                                "target": "GDT_Dia_B_H"
+                            },
+                            {
+                                "source": "GDT_Dia_B_H",
+                                "target": "GDT_Dia_B_Rh"
+                            },
+                            {
+                                "source": "GDT_Dia_B_Rh",
+                                "target": "GDT_Dia_T_Rs"
+                            },
+                            {
+                                "source": "GDT_Dia_T_Rs",
+                                "target": "GDT_ZX"
+                            },
+                            {
+                                "source": "GDT_ZX",
+                                "target": "GDT_Dis_T_B"
+                            },
+                            {
+                                "source": "RXJT_Dis_T_B",
+                                "target": "GDT_Dis_T_B"
+                            },
+                            {
+                                "source": "RXJT_S_B",
+                                "target": "GDT_S_T"
+                            },
+                            {
+                                "source": "RXJT_Dia_B_Rh",
+                                "target": "GDT_Dia_T_H"
+                            },
+                            {
+                                "source": "RXJT_Dia_B_H",
+                                "target": "GDT_Dia_T"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_01",
+                                "target": "RXJT_S_B"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_02",
+                                "target": "RXJT_S_B"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_03",
+                                "target": "RXJT_S_B"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_04",
+                                "target": "RXJT_S_B"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_05",
+                                "target": "RXJT_S_B"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_01",
+                                "target": "GDT_S_T"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_02",
+                                "target": "GDT_S_T"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_03",
+                                "target": "GDT_S_T"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_04",
+                                "target": "GDT_S_T"
+                            },
+                            {
+                                "source": "RXJT_GDT_LS_05",
+                                "target": "GDT_S_T"
+                            },
+                            {
+                                "source": "RXJT_JQL",
+                                "target": "RXJT_Dia_B_H"
+                            },
+                            {
+                                "source": "RXJT_JQL",
+                                "target": "RXJT_Dia_B_Rh"
+                            },
+                            {
+                                "source": "RXJT_JQL",
+                                "target": "RXJT_Dia_B_Rs"
+                            },
+                            {
+                                "source": "GDT_JQL",
+                                "target": "GDT_Dia_T"
+                            },
+                            {
+                                "source": "GDT_JQL",
+                                "target": "GDT_Dia_T_H"
+                            },
+                            {
+                                "source": "RXJT_POS",
+                                "target": "RXJT_ZX"
+                            },
+                            {
+                                "source": "GDT_POS",
+                                "target": "GDT_ZX"
+                            },
+                            {
+                                "source": "KZD_Dis_T_B",
+                                "target": "KZD_S_T"
+                            },
+                            {
+                                "source": "KZD_S_T",
+                                "target": "KZD_Dia_T_H"
+                            },
+                            {
+                                "source": "KZD_Dia_T_H",
+                                "target": "KZD_Dia_T"
+                            },
+                            {
+                                "source": "KZD_Dia_T",
+                                "target": "KZD_Dia_H"
+                            },
+                            {
+                                "source": "KZD_Dia_H",
+                                "target": "KZD_S_H"
+                            },
+                            {
+                                "source": "KZD_S_H",
+                                "target": "KZD_Dia_T_Rs"
+                            },
+                            {
+                                "source": "KZD_Dia_T_Rs",
+                                "target": "KZD_ZX"
+                            },
+                            {
+                                "source": "KZD_ZX",
+                                "target": "KZD_Dis_GDT_B"
+                            },
+                            {
+                                "source": "KZD_Dis_GDT_B",
+                                "target": "KZD_Dis_RXJT_B"
+                            },
+                            {
+                                "source": "KZD_Dis_RXJT_B",
+                                "target": "KZD_Dis_T_B"
+                            },
+                            {
+                                "source": "RXJT_S_T_b",
+                                "target": "KZD_S_T"
+                            },
+                            {
+                                "source": "RXJT_Dia_T",
+                                "target": "KZD_Dia_T"
+                            },
+                            {
+                                "source": "RXJT_Dia_T_H",
+                                "target": "KZD_Dia_T_H"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_01",
+                                "target": "RXJT_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_02",
+                                "target": "RXJT_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_03",
+                                "target": "RXJT_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_04",
+                                "target": "RXJT_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_05",
+                                "target": "RXJT_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_01",
+                                "target": "KZD_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_02",
+                                "target": "KZD_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_03",
+                                "target": "KZD_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_04",
+                                "target": "KZD_S_T"
+                            },
+                            {
+                                "source": "RXJT_KZD_LS_05",
+                                "target": "KZD_S_T"
+                            },
+                            {
+                                "source": "RXJT_GDT_JQL",
+                                "target": "GDT_Dia_B_H"
+                            },
+                            {
+                                "source": "RXJT_GDT_JQL",
+                                "target": "GDT_Dia_B_Rh"
+                            },
+                            {
+                                "source": "RXJT_KZD_JQL",
+                                "target": "KZD_Dia_T_H"
+                            },
+                            {
+                                "source": "RXJT_KZD_JQL",
+                                "target": "KZD_Dia_H"
+                            },
+                            {
+                                "source": "RXJT_KZD_JQL",
+                                "target": "KZD_S_H"
+                            },
+                            {
+                                "source": "RXJT_KZD_JQL",
+                                "target": "KZD_Dia_T_Rs"
+                            },
+                            {
+                                "source": "RXJT_GDT_POS",
+                                "target": "GDT_ZX"
+                            },
+                            {
+                                "source": "KZD_POS",
+                                "target": "KZD_ZX"
+                            },
+                            {
+                                "source": "BHGD_Dis_T_B",
+                                "target": "BHGD_S_T"
+                            },
+                            {
+                                "source": "BHGD_S_T",
+                                "target": "BHGD_Dia_T_H"
+                            },
+                            {
+                                "source": "BHGD_Dia_T_H",
+                                "target": "BHGD_Dia_T"
+                            },
+                            {
+                                "source": "BHGD_Dia_T",
+                                "target": "BHGD_ZX"
+                            },
+                            {
+                                "source": "BHGD_ZX",
+                                "target": "BHGD_Dis_T_B"
+                            },
+                            {
+                                "source": "GDT_Dia_B_H",
+                                "target": "BHGD_Dia_T_H"
+                            },
+                            {
+                                "source": "KZD_Dis_T_B",
+                                "target": "BHGD_Dis_T_B"
+                            },
+                            {
+                                "source": "GDT_Dia_B_Rh",
+                                "target": "BHGD_Dia_T"
+                            },
+                            {
+                                "source": "GDT_Dis_T_B",
+                                "target": "BHGD_Dis_T_B"
+                            },
+                            {
+                                "source": "GDT_S_B",
+                                "target": "BHGD_S_T"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_01",
+                                "target": "GDT_S_B"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_02",
+                                "target": "GDT_S_B"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_03",
+                                "target": "GDT_S_B"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_04",
+                                "target": "GDT_S_B"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_05",
+                                "target": "GDT_S_B"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_01",
+                                "target": "BHGD_S_T"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_02",
+                                "target": "BHGD_S_T"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_03",
+                                "target": "BHGD_S_T"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_04",
+                                "target": "BHGD_S_T"
+                            },
+                            {
+                                "source": "BHGD_KZD_LS_05",
+                                "target": "BHGD_S_T"
+                            },
+                            {
+                                "source": "BHGD_JQL",
+                                "target": "BHGD_Dia_T_H"
+                            },
+                            {
+                                "source": "BHGD_JQL",
+                                "target": "BHGD_Dia_T"
+                            },
+                            {
+                                "source": "BHGD_POS",
+                                "target": "BHGD_ZX"
+                            },
+                            {
+                                "source": "JT_ZX",
+                                "target": "JT_InS_A"
+                            },
+                            {
+                                "source": "JT_InS_A",
+                                "target": "JT_InS"
+                            },
+                            {
+                                "source": "JT_InS",
+                                "target": "JT_ZX"
+                            },
+                            {
+                                "source": "RXJT_OutS_A",
+                                "target": "JT_InS_A"
+                            },
+                            {
+                                "source": "RXJT_OutS",
+                                "target": "JT_InS"
+                            },
+                            {
+                                "source": "JTFRH_JQL",
+                                "target": "JT_InS_A"
+                            },
+                            {
+                                "source": "JTFRH_POS",
+                                "target": "JT_ZX"
+                            },
+                            {
+                                "source": "HC_OutS",
+                                "target": "HC_Dia_Out"
+                            },
+                            {
+                                "source": "HC_Dia_Out",
+                                "target": "HC_ZX"
+                            },
+                            {
+                                "source": "HC_ZX",
+                                "target": "HC_S_Tb"
+                            },
+                            {
+                                "source": "HC_S_Tb",
+                                "target": "HC_OutS"
+                            },
+                            {
+                                "source": "RXJT_S_T",
+                                "target": "HC_S_Tb"
+                            },
+                            {
+                                "source": "RXJT_Dia_H",
+                                "target": "HC_Dia_Out"
+                            },
+                            {
+                                "source": "KZD_Dia_H",
+                                "target": "HC_Dia_Out"
+                            },
+                            {
+                                "source": "KZD_S_H",
+                                "target": "HC_OutS"
+                            },
+                            {
+                                "source": "RXJT_S_H",
+                                "target": "HC_OutS"
+                            },
+                            {
+                                "source": "HC_JQL",
+                                "target": "HC_OutS"
+                            },
+                            {
+                                "source": "HC_JQL",
+                                "target": "HC_Dia_Out"
+                            },
+                            {
+                                "source": "HC_POS",
+                                "target": "HC_ZX"
+                            }
+                        ],
+                        lineStyle: {
+                            opacity: 0.9,
+                            width: 2,
+                            curveness: 0,
+                        },
+                    },
+                ],
+            };
+            return option;
+        }
+    },
+    mounted() {
+        this.initChart();
+    }
+}
+</script>
+
+<style scoped>
+#graph-chart {
+    height: 100%;
+    width: 100%;
+}
+</style>
